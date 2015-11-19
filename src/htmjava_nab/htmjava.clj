@@ -21,7 +21,7 @@
               (add-to network r)))
 
 (do (. network reset)
-  (-> network (look-for "r1") (look-for "l1")))
+  (-> network (look-for "r1") (look-for "l1") (. hasTemporalMemory)))
 
 (comment "
   .add(Network.createRegion("r1")
