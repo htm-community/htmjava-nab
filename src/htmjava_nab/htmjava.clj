@@ -4,24 +4,34 @@
           [org.numenta.nupic Parameters]))
 
 
-(defn look-for [thing by]
+(defn look-up [thing by]
   (. thing (lookup by)))
 
-
-(defn add-to [added-to added]
+(defn add-to! [added-to added]
   (. added-to (add added)))
 
-(def parameters (. Parameters getAllDefaultParameters))
-(def network (Network. "test" parameters))
-(def layer (let [tm (TemporalMemory.)
-                 l (.. Network (createLayer "l1" parameters))]
-             (. l (add tm))))
-(def region (let [r (.. Network (createRegion "r1"))]
-             (add-to r layer)
-              (add-to network r)))
+(defn reset-it! [thing]
+  (. thing reset)
+  thing)
 
-(do (. network reset)
-  (-> network (look-for "r1") (look-for "l1") (. hasTemporalMemory)))
+(defn create-layer [name params]
+  (.. Network (createLayer name params)))
+
+(defn create-region [name]
+  (.. Network (createRegion name)))
+
+(def parameters (. Parameters getAllDefaultParameters))
+
+(def network (Network. "test" parameters))
+
+(def layer (->> (TemporalMemory.)
+             (add-to! (create-layer "l1" parameters))))
+
+(def region (let [r (create-region "r1")]
+             (add-to! r layer)
+              (add-to! network r)))
+
+(-> network (reset-it!) (look-up "r1") (look-up "l1") (. hasTemporalMemory))
 
 (comment "
   .add(Network.createRegion("r1")
