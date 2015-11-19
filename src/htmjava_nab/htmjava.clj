@@ -3,6 +3,7 @@
           [org.numenta.nupic.algorithms TemporalMemory]
           [org.numenta.nupic Parameters]))
 
+; wrapper API
 
 (defn look-up [thing by]
   (. thing (lookup by)))
@@ -20,17 +21,19 @@
 (defn create-region [name]
   (.. Network (createRegion name)))
 
+; client code
+
 (def parameters (. Parameters getAllDefaultParameters))
 
 (def network (Network. "test" parameters))
 
-(def layer (->> (TemporalMemory.)
-             (add-to! (create-layer "l1" parameters))))
+(def tm (TemporalMemory.))
 
-(def region (let [r (create-region "r1")]
-             (add-to! r layer)
-              (add-to! network r)))
+(def layer (create-layer "l1" parameters))
 
+(def region (create-region "r1"))
+
+(->> tm (add-to! layer) (add-to! region) (add-to! network))
 (-> network (reset-it!) (look-up "r1") (look-up "l1") (. hasTemporalMemory))
 
 (comment "
