@@ -60,8 +60,7 @@
   (testing "Network with many connected regions"
     (let [n 5
           network (create-network "test" default-parameters)
-          regions (many-sp-regions n default-parameters)
-          lookup-region (fn [i] (look-up network (str "r" (inc i))))]
+          regions (many-sp-regions n default-parameters)]
       (do
         (try
           (do (connect! network "r1" "r2") (fail))
