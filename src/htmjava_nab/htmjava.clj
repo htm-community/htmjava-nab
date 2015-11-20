@@ -18,6 +18,10 @@
   (. thing reset)
   thing)
 
+(defn connect! [thing name1 name2]
+  (. thing (connect name1 name2))
+  thing)
+
 (defmulti prepare second)
 
 (defmethod prepare :ints [[data _]]
@@ -41,6 +45,11 @@
 (defn spatial-pooler [] (SpatialPooler.))
 
 (defn record-num [thing] (. thing getRecordNum))
+
+(defn head [thing] (. thing getHead))
+
+(defn upstream-region [thing] (. thing getUpstreamRegion))
+(defn downstream-region [thing] (. thing getDownstreamRegion))
 
 (def default-parameters (. Parameters getAllDefaultParameters))
 
