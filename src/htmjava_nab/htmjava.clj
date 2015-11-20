@@ -1,12 +1,15 @@
-(ns htmjava.clj
+(ns htmjava-nab.htmjava
   (import [org.numenta.nupic.network Network Region Layer PALayer]
-          [org.numenta.nupic.algorithms TemporalMemory]
+          [org.numenta.nupic.algorithms TemporalMemory SpatialPooler]
           [org.numenta.nupic Parameters]))
 
 ; wrapper API
 
 (defn look-up [thing by]
   (. thing (lookup by)))
+
+(defn lookup-in [root path]
+  (reduce look-up root path))
 
 (defn add-to! [added-to added]
   (. added-to (add added)))
@@ -15,26 +18,33 @@
   (. thing reset)
   thing)
 
+(defmulti prepare second)
+
+(defmethod prepare :ints [[data _]]
+  (int-array data))
+
+(defn compute! [thing data hint]
+  (. thing (compute (prepare [data hint])))
+  thing)
+
 (defn create-layer [name params]
   (.. Network (createLayer name params)))
 
 (defn create-region [name]
   (.. Network (createRegion name)))
 
+(defn create-network [name params]
+  (Network. name params))
+
+(defn temporal-memory [] (TemporalMemory.))
+
+(defn spatial-pooler [] (SpatialPooler.))
+
+(defn record-num [thing] (. thing getRecordNum))
+
+(def default-parameters (. Parameters getAllDefaultParameters))
+
 ; client code
-
-(def parameters (. Parameters getAllDefaultParameters))
-
-(def network (Network. "test" parameters))
-
-(def tm (TemporalMemory.))
-
-(def layer (create-layer "l1" parameters))
-
-(def region (create-region "r1"))
-
-(->> tm (add-to! layer) (add-to! region) (add-to! network))
-(-> network (reset-it!) (look-up "r1") (look-up "l1") (. hasTemporalMemory))
 
 (comment "
   .add(Network.createRegion("r1")
