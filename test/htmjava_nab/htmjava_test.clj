@@ -47,8 +47,9 @@
           tm (temporal-memory)
           layer (create-layer "l1" default-parameters)
           region (create-region "r1")
-          dump-record (fn [output] (println (str "Record Number: " (record-num output))))
-          show-error (fn [e] (println (str "Opps! " (.getMessage e))))
+          dump-record (fn [output]
+                        (println (str "Record: " (output-vector output [record-num sdr-str]))))
+          show-error (fn [e] (println (str "Opps! " (.getMessage e))) (.printStackTrace e))
           report-complete (fn [] (println "Done!"))]
       (do
         (->> tm (add-to! layer) (add-to! region) (add-to! network))
@@ -57,7 +58,6 @@
         (is (= 1 (-> network (lookup-in ["r1" "l1"]) record-num)))
         (is (= 0 (-> network (reset-it!) (lookup-in ["r1" "l1"]) record-num)))))))
 
-; System.out.println(output.getRecordNum() + ":  input = " + Arrays.toString(output.getEncoding()));//output = " + Arrays.toString(output.getSDR()) + ", " + output.getAnomalyScore());
 
 (defn many-sp-regions [n p]
   (mapv (fn [i] (->> (spatial-pooler)

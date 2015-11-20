@@ -1,7 +1,8 @@
 (ns htmjava-nab.htmjava
   (import [org.numenta.nupic.network Network Region Layer PALayer]
           [org.numenta.nupic.algorithms TemporalMemory SpatialPooler]
-          [org.numenta.nupic Parameters]))
+          [org.numenta.nupic Parameters]
+          [java.util Arrays]))
 
 ; wrapper API
 
@@ -48,6 +49,13 @@
 (defn spatial-pooler [] (SpatialPooler.))
 
 (defn record-num [thing] (. thing getRecordNum))
+(defn encoding [thing] (. thing getEncoding))
+(defn sdr [thing] (. thing getSDR))
+(defn classifier-input [thing field]
+  (.. thing getClassifierInput (get field) (get "inputValue")))
+
+(defn encoding-str [thing] (. Arrays (toString (encoding thing))))
+(defn sdr-str [thing] (. Arrays (toString (sdr thing))))
 
 (defn head [thing] (. thing getHead))
 
@@ -55,6 +63,10 @@
 (defn downstream-region [thing] (. thing getDownstreamRegion))
 
 (def default-parameters (. Parameters getAllDefaultParameters))
+
+; output.getRecordNum()  Arrays.toString(output.getEncoding())) Arrays.toString(output.getSDR()) + ", " + output.getAnomalyScore());
+(defn output-vector [output ks]
+  (mapv #(% output) ks))
 
 ; client code
 
