@@ -46,12 +46,13 @@
     (let [network (create-network "test" default-parameters)
           tm (temporal-memory)
           layer (create-layer "l1" default-parameters)
-          region (create-region "r1")]
+          region (create-region "r1")
+          dump-record (fn [output] (println (str "Record Number: " (record-num output))))
+          show-error (fn [e] (println (str "Opps! " (.getMessage e))))
+          report-complete (fn [] (println "Done!"))]
       (do
         (->> tm (add-to! layer) (add-to! region) (add-to! network))
-        (rx/subscribe (observe network)
-              (fn [output]
-                (println (str "Record Number: " (record-num output)))))
+        (rx/subscribe (observe network) dump-record show-error report-complete)
         (-> network (compute! [2 3 4] :ints) (compute! [2 3 4] :ints))
         (is (= 1 (-> network (lookup-in ["r1" "l1"]) record-num)))
         (is (= 0 (-> network (reset-it!) (lookup-in ["r1" "l1"]) record-num)))))))
