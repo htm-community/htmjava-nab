@@ -1,8 +1,7 @@
 (ns htmjava-nab.htmjava-test
   (:require [clojure.test :refer :all]
             [htmjava-nab.htmjava :refer :all]
-            [rx.lang.clojure.core :as rx]
-            [rx.lang.clojure.blocking :as rxb])
+            [rx.lang.clojure.core :as rx])
   (:import rx.Observable))
 
 (defn fail [] (is (= 0 1)))
