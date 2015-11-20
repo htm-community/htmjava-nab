@@ -16,7 +16,9 @@
           layer (create-layer "l1" default-parameters)
           region (create-region "r1")]
       (do
+        ; add everything together
         (->> tm (add-to! layer) (add-to! region) (add-to! network))
+        ; check if the tm is present, looking up each step
         (is (-> network (reset-it!) (lookup-in ["r1" "l1"]) (. hasTemporalMemory)))))))
 
 (deftest network-region-layer-sp
@@ -26,7 +28,9 @@
           layer (create-layer "l1" default-parameters)
           region (create-region "r1")]
       (do
+        ; add everything together
         (->> sp (add-to! layer) (add-to! region) (add-to! network))
+        ; check if the tm is not present, looking up each step
         (is (not (-> network (reset-it!) (lookup-in ["r1" "l1"]) (. hasTemporalMemory))))))))
 
 (deftest reset-record-num
@@ -38,7 +42,9 @@
       (do
         (->> tm (add-to! layer) (add-to! region) (add-to! network))
         (-> network (compute! [2 3 4] :ints) (compute! [2 3 4] :ints))
+        ; should be incremented
         (is (= 1 (-> network (lookup-in ["r1" "l1"]) record-num)))
+        ; should be reset to zero
         (is (= 0 (-> network (reset-it!) (lookup-in ["r1" "l1"]) record-num)))))))
 
 (deftest test-subscribe
