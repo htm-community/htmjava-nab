@@ -5,8 +5,6 @@
             [rx.lang.clojure.blocking :as rxb])
   (:import rx.Observable))
 
-
-
 (defn fail [] (is (= 0 1)))
 
 (deftest network-region-layer-tm
@@ -16,9 +14,7 @@
           layer (create-layer "l1" default-parameters)
           region (create-region "r1")]
       (do
-        ; add everything together
         (->> tm (add-to! layer) (add-to! region) (add-to! network))
-        ; check if the tm is present, looking up each step
         (is (-> network (reset-it!) (lookup-in ["r1" "l1"]) (. hasTemporalMemory)))))))
 
 (deftest network-region-layer-sp
@@ -28,9 +24,7 @@
           layer (create-layer "l1" default-parameters)
           region (create-region "r1")]
       (do
-        ; add everything together
         (->> sp (add-to! layer) (add-to! region) (add-to! network))
-        ; check if the tm is not present, looking up each step
         (is (not (-> network (reset-it!) (lookup-in ["r1" "l1"]) (. hasTemporalMemory))))))))
 
 (deftest reset-record-num
@@ -45,23 +39,6 @@
         ; should be incremented
         (is (= 1 (-> network (lookup-in ["r1" "l1"]) record-num)))
         ; should be reset to zero
-        (is (= 0 (-> network (reset-it!) (lookup-in ["r1" "l1"]) record-num)))))))
-
-(deftest test-subscribe
-  (testing "Test subscribe"
-    (let [network (create-network "test" default-parameters)
-          tm (temporal-memory)
-          layer (create-layer "l1" default-parameters)
-          region (create-region "r1")
-          dump-record (fn [output]
-                        (println (str "Record: " (output-vector output [record-num sdr-str]))))
-          show-error (fn [e] (println (str "Opps! " (.getMessage e))) (.printStackTrace e))
-          report-complete (fn [] (println "Done!"))]
-      (do
-        (->> tm (add-to! layer) (add-to! region) (add-to! network))
-        (rx/subscribe (observe network) dump-record show-error report-complete)
-        (-> network (compute! [2 3 4] :ints) (compute! [2 3 4] :ints))
-        (is (= 1 (-> network (lookup-in ["r1" "l1"]) record-num)))
         (is (= 0 (-> network (reset-it!) (lookup-in ["r1" "l1"]) record-num)))))))
 
 
@@ -107,6 +84,24 @@
             (recur the-head new-head)
             (do (is (= the-head (regions 0)))
               (is (= the-head (head network))))))))))
+
+(deftest test-subscribe
+  (testing "Test subscribe"
+    (let [network (create-network "test" default-parameters)
+          tm (temporal-memory)
+          layer (create-layer "l1" default-parameters)
+          region (create-region "r1")
+          dump-record (fn [output]
+                        (println (str "Record: " (output-vector output [record-num sdr-str]))))
+          show-error (fn [e] (println (str "Opps! " (.getMessage e))) (.printStackTrace e))
+          report-complete (fn [] (println "Done!"))]
+      (do
+        (->> tm (add-to! layer) (add-to! region) (add-to! network))
+        (rx/subscribe (observe network) dump-record show-error report-complete)
+        (-> network (compute! [2 3 4] :ints) (compute! [2 3 4] :ints))
+        (is (= 1 (-> network (lookup-in ["r1" "l1"]) record-num)))
+        (is (= 0 (-> network (reset-it!) (lookup-in ["r1" "l1"]) record-num)))))))
+
 
 ;          (println "downstream: " (.getName downstream) " head " (.getName the-head))
 
