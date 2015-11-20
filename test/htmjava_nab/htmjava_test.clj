@@ -36,18 +36,14 @@
       (do
         (->> tm (add-to! layer) (add-to! region) (add-to! network))
         (-> network (compute! [2 3 4] :ints) (compute! [2 3 4] :ints))
-        ; should be incremented
         (is (= 1 (-> network (lookup-in ["r1" "l1"]) record-num)))
-        ; should be reset to zero
         (is (= 0 (-> network (reset-it!) (lookup-in ["r1" "l1"]) record-num)))))))
-
 
 (defn many-sp-regions [n p]
   (mapv (fn [i] (->> (spatial-pooler)
                    (add-to! (create-layer "l" p))
                    (add-to! (create-region (str "r" (inc i))))))
        (range n)))
-
 
 (deftest add-many-regions
   (testing "Network with many regions"
@@ -102,8 +98,6 @@
         (is (= 1 (-> network (lookup-in ["r1" "l1"]) record-num)))
         (is (= 0 (-> network (reset-it!) (lookup-in ["r1" "l1"]) record-num)))))))
 
-
-;          (println "downstream: " (.getName downstream) " head " (.getName the-head))
 
 (comment "
 
