@@ -1,6 +1,11 @@
 (ns htmjava-nab.htmjava-test
   (:require [clojure.test :refer :all]
-            [htmjava-nab.htmjava :refer :all]))
+            [htmjava-nab.htmjava :refer :all]
+            [rx.lang.clojure.core :as rx]
+            [rx.lang.clojure.blocking :as rxb])
+  (:import rx.Observable))
+
+
 
 (defn fail [] (is (= 0 1)))
 
@@ -35,6 +40,23 @@
         (-> network (compute! [2 3 4] :ints) (compute! [2 3 4] :ints))
         (is (= 1 (-> network (lookup-in ["r1" "l1"]) record-num)))
         (is (= 0 (-> network (reset-it!) (lookup-in ["r1" "l1"]) record-num)))))))
+
+(deftest test-subscribe
+  (testing "Test subscribe"
+    (let [network (create-network "test" default-parameters)
+          tm (temporal-memory)
+          layer (create-layer "l1" default-parameters)
+          region (create-region "r1")]
+      (do
+        (->> tm (add-to! layer) (add-to! region) (add-to! network))
+        (rx/subscribe (observe network)
+              (fn [output]
+                (println (str "Record Number: " (record-num output)))))
+        (-> network (compute! [2 3 4] :ints) (compute! [2 3 4] :ints))
+        (is (= 1 (-> network (lookup-in ["r1" "l1"]) record-num)))
+        (is (= 0 (-> network (reset-it!) (lookup-in ["r1" "l1"]) record-num)))))))
+
+; System.out.println(output.getRecordNum() + ":  input = " + Arrays.toString(output.getEncoding()));//output = " + Arrays.toString(output.getSDR()) + ", " + output.getAnomalyScore());
 
 (defn many-sp-regions [n p]
   (mapv (fn [i] (->> (spatial-pooler)

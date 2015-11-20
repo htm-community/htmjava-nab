@@ -14,6 +14,9 @@
 (defn add-to! [added-to added]
   (. added-to (add added)))
 
+(defn observe [observed]
+  (. observed observe))
+
 (defn reset-it! [thing]
   (. thing reset)
   thing)

@@ -4,7 +4,8 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.numenta/htm.java "0.6.5"]]
+                 [org.numenta/htm.java "0.6.5"]
+                 [io.reactivex/rxclojure "1.0.0"]]
   :main ^:skip-aot htmjava-nab.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
