@@ -4,6 +4,7 @@ This project has two goals:
 - build a Clojure wrapper for [htm.java](https://github.com/numenta/htm.java)
 - build a HTM.java runner for [Numenta Anomaly Benchmark](https://github.com/numenta/NAB)
 
+Build Status: [![Circle CI](https://circleci.com/gh/nupic-community/htmjava-nab.svg?style=shield)](https://circleci.com/gh/nupic-community/htmjava-nab)
 
 ## License
 
