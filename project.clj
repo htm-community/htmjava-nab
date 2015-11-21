@@ -1,8 +1,8 @@
 (defproject htmjava-nab "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
-  :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :url "https://github.com/nupic-community/htmjava-nab"
+  :license {:name "GNU Affero General Public Licence, Version 3"
+            :url "http://www.gnu.org/licenses/agpl-3.0.en.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.numenta/htm.java "0.6.5"]
                  [io.reactivex/rxclojure "1.0.0"]]
