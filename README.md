@@ -7,7 +7,8 @@ This project has two goals:
 
 ## License
 
-Copyright © 2015 Fergal Byrne
+Copyright © 2015 Fergal Byrne and the HTM Community
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under your choice of
+* the Eclipse Public License, the same as Clojure.
+* the [GNU Affero General Public Licence, Version 3](http://www.gnu.org/licenses/agpl-3.0.en.html), the same as NuPIC.
