@@ -2,7 +2,9 @@
   (:require [clojure.test :refer :all]
             [htmjava-nab.htmjava :refer :all]
             [rx.lang.clojure.core :as rx])
-  (:import rx.Observable))
+  (:import [rx Observable]
+           [org.numenta.nupic.util MersenneTwister]))
+
 
 (defn fail [] (is (= 0 1)))
 
@@ -96,7 +98,90 @@
         (is (= 1 (-> network (lookup-in ["r1" "l1"]) record-num)))
         (is (= 0 (-> network (reset-it!) (lookup-in ["r1" "l1"]) record-num)))))))
 
+(deftest test-params
+  (testing "Changing Parameters Map"
+    (let [p (fresh-parameters)]
+      (is (= false (get-param p :global-inhibitions)))
+      (-> p (set-param! :global-inhibitions true))
+      (is (= true (get-param p :global-inhibitions))))))
 
-(comment "
+(deftest test-network-halts
+  (testing "Test network halts"
+    (let [completed? (atom false)
+          p (-> (fresh-parameters) (set-param! :random (MersenneTwister. 42)))
+          lines (atom [])
+          network (create-network "test" p)
+          tm (temporal-memory)
+          sp (spatial-pooler)
+          anom (create-anomaly)
+          sensor(create-file-sensor "rec-center-hourly.csv")
+          layer (-> (create-layer "l1" p)
+                    (alter-param! :auto-classify true)
+                    (add-to! anom)
+                    (add-to! tm)
+                    (add-to! sp)
+                    (add-to! sensor))
+          region (create-region "r1")
+          dump-record (fn [output]
+                        (println (str "Record: " (output-vector output [record-num sdr-str]))))
+          show-error (fn [e] (println (str "Opps! " (.getMessage e))) (.printStackTrace e))
+          report-complete (fn [] (println "Done!") (reset! completed? true))]
+      (do
+        (->> layer (add-to! region) (add-to! network))
+        (rx/subscribe (observe network) dump-record show-error report-complete)
+        (-> network (compute! [2 3 4] :ints) (compute! [2 3 4] :ints))
+        (is (= 1 (-> network (lookup-in ["r1" "l1"]) record-num)))
+        (is (= 0 (-> network (reset-it!) (lookup-in ["r1" "l1"]) record-num)))))))
 
+
+  (comment "
+String onCompleteStr = null;
+    @Test
+    public void testBasicNetworkHaltGetsOnComplete() {
+        Parameters p = NetworkTestHarness.getParameters();
+        p = p.union(NetworkTestHarness.getNetworkDemoTestEncoderParams());
+                    )));
+
+        final List<String> lines = new ArrayList<>();
+
+        // Listen to network emissions
+        network.observe().subscribe(new Subscriber<Inference>() {
+            @Override public void onCompleted() {
+                onCompleteStr = \"On completed reached!\";
+            }
+            @Override public void onError(Throwable e) { e.printStackTrace(); }
+            @Override public void onNext(Inference i) {
+//                System.out.println(Arrays.toString(i.getSDR()));
+//                System.out.println(i.getRecordNum() + "," +
+//                    i.getClassifierInput().get(\"consumption\").get(\"inputValue\") + \",\" + i.getAnomalyScore());
+                lines.add(i.getRecordNum() + "," +
+                    i.getClassifierInput().get(\"consumption\").get(\"inputValue\") + \",\" + i.getAnomalyScore());
+
+                if(i.getRecordNum() == 9) {
+                    network.halt();
+                }
+            }
+        });
+
+        // Start the network
+        network.start();
+
+        // Test network output
+        try {
+            Region r1 = network.lookup(\"r1\");
+            r1.lookup(\"1\").getLayerThread().join();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        assertEquals(10, lines.size());
+        int i = 0;
+        for(String l : lines) {
+            String[] sa = l.split(\"[//s]*//,[//s]*\");
+            assertEquals(3, sa.length);
+            assertEquals(i++, Integer.parseInt(sa[0]));
+        }
+
+        assertEquals(\"On completed reached!\", onCompleteStr);
+    }
 ")
