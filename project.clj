@@ -16,8 +16,8 @@
   :profiles {:uberjar {:aot :all}
              :dev {:dependencies [[midje "1.8.2"]
                                   [criterium "0.4.3"]]}}
-
-  :plugins [[michaelblume/lein-marginalia "0.9.0"]]
+  :plugins [[michaelblume/lein-marginalia "0.9.0"]
+            [lein-midje "3.0.1"]]
   :repositories [["sonatype" {:url "http://oss.sonatype.org/content/repositories/releases"
                               ;; Disable signing releases deployed to this repo.
                               ;; (Not recommended.)
