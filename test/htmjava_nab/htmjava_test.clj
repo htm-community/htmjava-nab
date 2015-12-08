@@ -105,7 +105,7 @@
       (-> p (set-param! :global-inhibitions true))
       (is (= true (get-param p :global-inhibitions))))))
 
-(deftest test-network-halts
+#_(deftest test-network-halts
   (testing "Test network halts"
     (let [completed? (atom false)
           p (-> (fresh-parameters) (set-param! :random (MersenneTwister. 42)))

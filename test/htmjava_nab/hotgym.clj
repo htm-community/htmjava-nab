@@ -102,12 +102,12 @@
                                                             {:field :time-of-day}
                                                             {:field :weekday?}]}
                                    ]})
-      (def hotgym (load-opf-file hotgym-config))
+(def hotgym (load-opf-file hotgym-config))
 
 (deftest hotgym-loaded
   (testing "hotgym data loaded"
 
-(with-open [out-file (io/writer "hotgym-full.csv")]
+#_(with-open [out-file (io/writer "hotgym-full.csv")]
   (csv/write-csv out-file
                  [["abc" "def"]
                   ["ghi" "jkl"]]))
