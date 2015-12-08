@@ -1,0 +1,60 @@
+(ns htmjava-nab.parameters
+  (import [org.numenta.nupic Parameters$KEY]
+          [org.numenta.nupic.util MersenneTwister]
+          [java.util Collections]))
+
+
+(def params-map {
+:seed   [Parameters$KEY/SEED   42]
+:random [Parameters$KEY/RANDOM (MersenneTwister. 42)]
+;        /////////// Temporal Memory Parameters ///////////
+:column-dimensions     [Parameters$KEY/COLUMN_DIMENSIONS     (int-array [2048])]
+:cells-per-column      [Parameters$KEY/CELLS_PER_COLUMN      32]
+:activation-threshold  [Parameters$KEY/ACTIVATION_THRESHOLD  13]
+:learning-radius       [Parameters$KEY/LEARNING_RADIUS       2048]
+:min-threshold         [Parameters$KEY/MIN_THRESHOLD,        10]
+:max-new-synapse-count [Parameters$KEY/MAX_NEW_SYNAPSE_COUNT 20]
+:initial-permanence    [Parameters$KEY/INITIAL_PERMANENCE    0.21]
+;        //////////// Spatial Pooler Parameters ///////////
+:connected-permanence  [Parameters$KEY/CONNECTED_PERMANENCE, 0.5]
+:permanence-increment  [Parameters$KEY/PERMANENCE_INCREMENT, 0.10]
+:permanence-decrement  [Parameters$KEY/PERMANENCE_DECREMENT, 0.10]
+:predicted-segment-decrement [Parameters$KEY/PREDICTED_SEGMENT_DECREMENT, 0.0]
+:tm-verbosity          [Parameters$KEY/TM_VERBOSITY, 0]
+
+:input-dimensions      [Parameters$KEY/INPUT_DIMENSIONS, (int-array [64])]
+:potential-radius      [Parameters$KEY/POTENTIAL_RADIUS, 16]
+:potential-pct         [Parameters$KEY/POTENTIAL_PCT, 0.5]
+:global-inhibitions    [Parameters$KEY/GLOBAL_INHIBITIONS, false]
+:inhibition-radius     [Parameters$KEY/INHIBITION_RADIUS, 0]
+:local-area-density    [Parameters$KEY/LOCAL_AREA_DENSITY, -1.0]
+:num-active-columns-per-inh-area [Parameters$KEY/NUM_ACTIVE_COLUMNS_PER_INH_AREA, 10.0]
+:stimulus-threshold    [Parameters$KEY/STIMULUS_THRESHOLD, 0.0]
+:syn-perm-inactive-dec [Parameters$KEY/SYN_PERM_INACTIVE_DEC, 0.01]
+:syn-perm-inactive-inc [Parameters$KEY/SYN_PERM_ACTIVE_INC, 0.1]
+:syn-perm-connected    [Parameters$KEY/SYN_PERM_CONNECTED, 0.10]
+:syn-perm-below-stimulus-inc [Parameters$KEY/SYN_PERM_BELOW_STIMULUS_INC, 0.01]
+:syn-perm-trim-threshold [Parameters$KEY/SYN_PERM_TRIM_THRESHOLD, 0.5]
+:min-pct-overlap-duty-cycle [Parameters$KEY/MIN_PCT_OVERLAP_DUTY_CYCLE, 0.001]
+:min-pct-active-duty-cycle  [Parameters$KEY/MIN_PCT_ACTIVE_DUTY_CYCLE, 0.001]
+:duty-cycle-period     [Parameters$KEY/DUTY_CYCLE_PERIOD, 1000]
+:max-boost             [Parameters$KEY/MAX_BOOST, 10.0]
+:sp-verbosity          [Parameters$KEY/SP_VERBOSITY, 0]
+:learn                 [Parameters$KEY/LEARN, true]
+;        ///////////  Encoder Parameters ///////////
+:n                     [Parameters$KEY/N, 500]
+:w                     [Parameters$KEY/W, 21]
+:min-val               [Parameters$KEY/MIN_VAL, 0.0]
+:max-val               [Parameters$KEY/MAX_VAL, 1000.]
+:radius                [Parameters$KEY/RADIUS, 21.]
+:resolution            [Parameters$KEY/RESOLUTION, 1.]
+:periodic              [Parameters$KEY/PERIODIC, false]
+:clip-input            [Parameters$KEY/CLIP_INPUT, false]
+:forced                [Parameters$KEY/FORCED, false]
+:field-name            [Parameters$KEY/FIELD_NAME, "UNSET"]
+:field-type            [Parameters$KEY/FIELD_TYPE, "int"]
+:encoder               [Parameters$KEY/ENCODER, "ScalarEncoder"]
+:field-encoding-map    [Parameters$KEY/FIELD_ENCODING_MAP, (Collections/emptyMap)]
+:auto-classify         [Parameters$KEY/AUTO_CLASSIFY, false]
+                 })
+
